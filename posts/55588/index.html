@@ -1,0 +1,2348 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="云原生,k8s,kafka-operator">
+    <meta name="description" content="Java技术栈,MySQL,Spring源码,分布式系统,redis,kafka,JDK,算法与数据结构">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>使用Strimzi-Kafka-Operator搭建kafka集群 | 爪哇君-Java技术栈</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+
+    <script src="/libs/jquery/jquery.min.js"></script>
+
+<meta name="generator" content="Hexo 5.4.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <span class="logo-span">爪哇君-Java技术栈</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="" class="waves-effect waves-light">
+
+      
+      <span>数据结构与算法</span>
+      <i class="fas fa-chevron-down" aria-hidden="true" style="zoom: 0.6;"></i>
+    </a>
+    <ul class="sub-nav menus_item_child ">
+      
+      <li>
+        <a href="/posts/21238">
+          
+          <span>冒泡排序</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/51203">
+          
+          <span>选择排序</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/50190">
+          
+          <span>插入排序</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/63711">
+          
+          <span>归并排序</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/11306">
+          
+          <span>快速排序</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/58089">
+          
+          <span>计数排序</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/35215">
+          
+          <span>桶排序</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/48527">
+          
+          <span>基数排序</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/37273">
+          
+          <span>栈</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/26671">
+          
+          <span>队列</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/54862">
+          
+          <span>链表</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/44093">
+          
+          <span>跳表</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/45841">
+          
+          <span>二叉搜索树(BST)</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/20058">
+          
+          <span>平衡二叉树(AVL)</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/28769">
+          
+          <span>红黑树</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/18710">
+          
+          <span>B树与B+树</span>
+        </a>
+      </li>
+      
+    </ul>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/posts/26123" class="waves-effect waves-light">
+      
+      <span>JVM</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/posts/55427" class="waves-effect waves-light">
+      
+      <span>Spring源码</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/posts/46132" class="waves-effect waves-light">
+
+      
+      <span>设计模式</span>
+      <i class="fas fa-chevron-down" aria-hidden="true" style="zoom: 0.6;"></i>
+    </a>
+    <ul class="sub-nav menus_item_child ">
+      
+      <li>
+        <a href="/posts/46132">
+          
+          <span>单例模式</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46133">
+          
+          <span>简单工厂</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46134">
+          
+          <span>工厂方法</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46135">
+          
+          <span>抽象工厂</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46136">
+          
+          <span>原型模式</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46136">
+          
+          <span>建造者模式</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46138">
+          
+          <span>策略模式</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46139">
+          
+          <span>观察者模式</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46140">
+          
+          <span>命令模式</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46141">
+          
+          <span>模板模式</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46142">
+          
+          <span>责任链模式</span>
+        </a>
+      </li>
+      
+    </ul>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/posts/112225" class="waves-effect waves-light">
+
+      
+      <span>云原生</span>
+      <i class="fas fa-chevron-down" aria-hidden="true" style="zoom: 0.6;"></i>
+    </a>
+    <ul class="sub-nav menus_item_child ">
+      
+      <li>
+        <a href="/posts/112225">
+          
+          <span>Sealos一键安装K8S</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/16358">
+          
+          <span>Local-Path-Provisioner动态创建本地磁盘pv</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/55588">
+          
+          <span>Strimzi-Kafka-Operator搭建Kafka集群</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/5019">
+          
+          <span>Prometheus-Operator搭建监控集群</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/35914">
+          
+          <span>Minio-Operator搭建MinIO集群</span>
+        </a>
+      </li>
+      
+    </ul>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/posts/51727" class="waves-effect waves-light">
+      
+      <span>MySQL</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/posts/30673" class="waves-effect waves-light">
+      
+      <span>Kafka</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="" class="waves-effect waves-light">
+
+      
+      <span>其他</span>
+      <i class="fas fa-chevron-down" aria-hidden="true" style="zoom: 0.6;"></i>
+    </a>
+    <ul class="sub-nav menus_item_child ">
+      
+      <li>
+        <a href="/posts/21708">
+          
+          <span>Hexo + GitHub Pages 搭建你的个人博客</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/32786">
+          
+          <span>自定义域名+七牛云搭建免费hexo博客</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/13563">
+          
+          <span>基于Redis实现查找附近的人</span>
+        </a>
+      </li>
+      
+    </ul>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <div class="logo-name">爪哇君-Java技术栈</div>
+        <div class="logo-desc">
+            
+            Java技术栈,MySQL,Spring源码,分布式系统,redis,kafka,JDK,算法与数据结构
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fas fa-fw fa-link"></i>
+			
+			数据结构与算法
+			<span class="m-icon"><i class="fas fa-chevron-right"></i></span>
+		</a>
+            <ul  style="background:  ;" >
+              
+                <li>
+
+                  <a href="/posts/21238 " style="margin-left:75px">
+				  
+		          <span>冒泡排序</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/51203 " style="margin-left:75px">
+				  
+		          <span>选择排序</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/50190 " style="margin-left:75px">
+				  
+		          <span>插入排序</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/63711 " style="margin-left:75px">
+				  
+		          <span>归并排序</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/11306 " style="margin-left:75px">
+				  
+		          <span>快速排序</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/58089 " style="margin-left:75px">
+				  
+		          <span>计数排序</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/35215 " style="margin-left:75px">
+				  
+		          <span>桶排序</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/48527 " style="margin-left:75px">
+				  
+		          <span>基数排序</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/37273 " style="margin-left:75px">
+				  
+		          <span>栈</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/26671 " style="margin-left:75px">
+				  
+		          <span>队列</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/54862 " style="margin-left:75px">
+				  
+		          <span>链表</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/44093 " style="margin-left:75px">
+				  
+		          <span>跳表</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/45841 " style="margin-left:75px">
+				  
+		          <span>二叉搜索树(BST)</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/20058 " style="margin-left:75px">
+				  
+		          <span>平衡二叉树(AVL)</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/28769 " style="margin-left:75px">
+				  
+		          <span>红黑树</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/18710 " style="margin-left:75px">
+				  
+		          <span>B树与B+树</span>
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/posts/26123" class="waves-effect waves-light">
+			
+				<i class="fas fa-fw fa-link"></i>
+			
+			JVM
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/posts/55427" class="waves-effect waves-light">
+			
+				<i class="fas fa-fw fa-link"></i>
+			
+			Spring源码
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fas fa-fw fa-link"></i>
+			
+			设计模式
+			<span class="m-icon"><i class="fas fa-chevron-right"></i></span>
+		</a>
+            <ul  style="background:  ;" >
+              
+                <li>
+
+                  <a href="/posts/46132 " style="margin-left:75px">
+				  
+		          <span>单例模式</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46133 " style="margin-left:75px">
+				  
+		          <span>简单工厂</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46134 " style="margin-left:75px">
+				  
+		          <span>工厂方法</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46135 " style="margin-left:75px">
+				  
+		          <span>抽象工厂</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46136 " style="margin-left:75px">
+				  
+		          <span>原型模式</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46136 " style="margin-left:75px">
+				  
+		          <span>建造者模式</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46138 " style="margin-left:75px">
+				  
+		          <span>策略模式</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46139 " style="margin-left:75px">
+				  
+		          <span>观察者模式</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46140 " style="margin-left:75px">
+				  
+		          <span>命令模式</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46141 " style="margin-left:75px">
+				  
+		          <span>模板模式</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46142 " style="margin-left:75px">
+				  
+		          <span>责任链模式</span>
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fas fa-fw fa-link"></i>
+			
+			云原生
+			<span class="m-icon"><i class="fas fa-chevron-right"></i></span>
+		</a>
+            <ul  style="background:  ;" >
+              
+                <li>
+
+                  <a href="/posts/112225 " style="margin-left:75px">
+				  
+		          <span>Sealos一键安装K8S</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/16358 " style="margin-left:75px">
+				  
+		          <span>Local-Path-Provisioner动态创建本地磁盘pv</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/55588 " style="margin-left:75px">
+				  
+		          <span>Strimzi-Kafka-Operator搭建Kafka集群</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/5019 " style="margin-left:75px">
+				  
+		          <span>Prometheus-Operator搭建监控集群</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/35914 " style="margin-left:75px">
+				  
+		          <span>Minio-Operator搭建MinIO集群</span>
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/posts/51727" class="waves-effect waves-light">
+			
+				<i class="fas fa-fw fa-link"></i>
+			
+			MySQL
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/posts/30673" class="waves-effect waves-light">
+			
+				<i class="fas fa-fw fa-link"></i>
+			
+			Kafka
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fas fa-fw fa-link"></i>
+			
+			其他
+			<span class="m-icon"><i class="fas fa-chevron-right"></i></span>
+		</a>
+            <ul  style="background:  ;" >
+              
+                <li>
+
+                  <a href="/posts/21708 " style="margin-left:75px">
+				  
+		          <span>Hexo + GitHub Pages 搭建你的个人博客</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/32786 " style="margin-left:75px">
+				  
+		          <span>自定义域名+七牛云搭建免费hexo博客</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/13563 " style="margin-left:75px">
+				  
+		          <span>基于Redis实现查找附近的人</span>
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/14.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">使用Strimzi-Kafka-Operator搭建kafka集群</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        width: 300px;
+        padding-left: 20px;
+        overflow-y: scroll;
+        max-height: calc(100vh - 80px);
+    }
+
+    .toc-widget::-webkit-scrollbar { 
+        width: 0 !important 
+    }
+
+    .toc-widget .toc-title {
+        padding: 35px 0 15px 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content {
+        padding-bottom: 5px;
+        padding-left: 20px;
+        overflow: auto;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+
+        position: absolute;
+        right: 23.5vw;
+        display: block;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+
+    .margin-left-3{
+        margin-left: 300px !important;
+    }
+    .cate-post{
+        padding-top: 3px;
+        padding-bottom: 3px;
+    }
+    .cate-post a{
+        color: black;
+        padding-left: 20px;
+    }
+    .cate-post a:hover {
+        color: #42b983;
+    }
+</style>
+<div class="row">
+    <div id="toc-aside" class="expanded col hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;padding-bottom: 30px;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;
+            
+            
+            云原生
+             
+            
+            </div>
+
+                    
+                    
+                         
+                         
+                            
+                              <div class="cate-post">
+                                <a  href="/posts/112225/">使用Sealos一键安装K8S</a>
+                              </div>
+                            
+                            
+                         
+                            
+                              <div class="cate-post">
+                                <a  href="/posts/16358/">使用Pocal-Path-Provisioner动态创建本地磁盘pv</a>
+                              </div>
+                            
+                            
+                         
+                            
+                              <div class="cate-post">
+                                <a style="color: #42b983;font-weight:bold" href="/posts/55588/">使用Strimzi-Kafka-Operator搭建kafka集群</a>
+                              </div>
+                            
+                            
+                         
+                            
+                            
+                         
+                            
+                            
+                         
+                    
+                    
+
+            <div id="toc-content"></div>
+            
+            
+                    
+                         
+                         
+                            
+                            
+                            
+                         
+                            
+                            
+                            
+                         
+                            
+                            
+                            
+                         
+                            
+                            
+                              <div class="cate-post"><a href="/posts/5019/">使用Prometheus-Operator搭建监控集群</a></div>
+                            
+                            
+                         
+                            
+                            
+                              <div class="cate-post"><a href="/posts/35914/">使用Minio-Operator搭建MinIO集群</a></div>
+                            
+                            
+                         
+                    
+                    
+
+        </div>
+    </div>
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+
+            <div class="row tag-cate">
+              <!--
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/">
+                                <span class="chip bg-color">云原生</span>
+                            </a>
+                        
+                            <a href="/tags/k8s/">
+                                <span class="chip bg-color">k8s</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+               
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/%E4%BA%91%E5%8E%9F%E7%94%9F/" class="post-category">
+                                云原生
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                -->
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2022-07-28
+                </div>
+                
+
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                    2.8k
+                </div>
+                
+
+                
+
+                
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/libs/prism/prism.css">
+        
+
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="安装Kafka-Operator"><a href="#安装Kafka-Operator" class="headerlink" title="安装Kafka-Operator"></a>安装Kafka-Operator</h3><p>创建命名空间</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">kubectl create namespace kafka<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>下载<code>https://strimzi.io/install/latest?namespace=kafka</code>并重命名为install.yaml，执行安装</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">kubectl create -f install.yaml -n kafka<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="创建kafka集群"><a href="#创建kafka集群" class="headerlink" title="创建kafka集群"></a>创建kafka集群</h3><p>下载<code>https://strimzi.io/examples/latest/kafka/kafka-persistent-single.yaml</code>，修改内容：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> kafka.strimzi.io/v1beta2
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Kafka
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> mykafka <span class="token comment"># 集群名称</span>
+  <span class="token key atrule">namespace</span><span class="token punctuation">:</span> kafka <span class="token comment"># 增加一行命名空间</span>
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">kafka</span><span class="token punctuation">:</span>
+    <span class="token key atrule">version</span><span class="token punctuation">:</span> 3.2.0
+    <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">3</span> <span class="token comment"># kafka节点数</span>
+    <span class="token key atrule">listeners</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> plain
+        <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">9092</span>
+        <span class="token key atrule">type</span><span class="token punctuation">:</span> internal
+        <span class="token key atrule">tls</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> tls
+        <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">9093</span>
+        <span class="token key atrule">type</span><span class="token punctuation">:</span> internal
+        <span class="token key atrule">tls</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+    <span class="token key atrule">config</span><span class="token punctuation">:</span> <span class="token comment"># 根据情况修改</span>
+      <span class="token key atrule">offsets.topic.replication.factor</span><span class="token punctuation">:</span> <span class="token number">3</span>
+      <span class="token key atrule">transaction.state.log.replication.factor</span><span class="token punctuation">:</span> <span class="token number">3</span>
+      <span class="token key atrule">transaction.state.log.min.isr</span><span class="token punctuation">:</span> <span class="token number">1</span>
+      <span class="token key atrule">default.replication.factor</span><span class="token punctuation">:</span> <span class="token number">3</span>
+      <span class="token key atrule">min.insync.replicas</span><span class="token punctuation">:</span> <span class="token number">1</span>
+      <span class="token key atrule">inter.broker.protocol.version</span><span class="token punctuation">:</span> <span class="token string">"3.2"</span>
+    <span class="token key atrule">storage</span><span class="token punctuation">:</span>
+      <span class="token key atrule">type</span><span class="token punctuation">:</span> jbod
+      <span class="token key atrule">volumes</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">id</span><span class="token punctuation">:</span> <span class="token number">0</span>
+        <span class="token key atrule">type</span><span class="token punctuation">:</span> persistent<span class="token punctuation">-</span>claim
+        <span class="token key atrule">class</span><span class="token punctuation">:</span> local<span class="token punctuation">-</span>path <span class="token comment"># 使用local-path这个storageclass</span>
+        <span class="token key atrule">size</span><span class="token punctuation">:</span> 100Gi
+        <span class="token key atrule">deleteClaim</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+  <span class="token key atrule">zookeeper</span><span class="token punctuation">:</span>
+    <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">3</span> <span class="token comment"># zk节点数</span>
+    <span class="token key atrule">storage</span><span class="token punctuation">:</span>
+      <span class="token key atrule">type</span><span class="token punctuation">:</span> persistent<span class="token punctuation">-</span>claim
+      <span class="token key atrule">class</span><span class="token punctuation">:</span> local<span class="token punctuation">-</span>path <span class="token comment"># 使用local-path这个storageclass</span>
+      <span class="token key atrule">size</span><span class="token punctuation">:</span> 100Gi
+      <span class="token key atrule">deleteClaim</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+  <span class="token key atrule">entityOperator</span><span class="token punctuation">:</span>
+    <span class="token key atrule">topicOperator</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+    <span class="token key atrule">userOperator</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>注意用#注释的部分，视情况修改。其中namespace尤其重要，一定要填</p>
+<p>创建集群：</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">kubectl apply -f kafka-persistent-single.yaml<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>不要在意<code>kafka-persistent-single.yaml</code>这个文件的命名，官方给的example就是这个名，你可以更改为任意名字。</p>
+<p>查看pods：</p>
+<p><img src="/images/image-20220728232158853.png"></p>
+<p>查看svc：</p>
+<p><img src="/images/image-20220728232233016.png"></p>
+<p>集群内使用连接kafka只需只用<code>mykafka-kafka-bootstrap:9092</code>，例如生产数据：</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">kubectl -n kafka run kafka-producer -ti <span class="token punctuation">\</span>
+  --image<span class="token operator">=</span>quay.io/strimzi/kafka:0.30.0-kafka-3.2.0 <span class="token punctuation">\</span>
+  --rm<span class="token operator">=</span>true --restart<span class="token operator">=</span>Never -- bin/kafka-console-producer.sh <span class="token punctuation">\</span>
+  --bootstrap-server mykafka-kafka-bootstrap:9092 <span class="token punctuation">\</span>
+  --topic my-topic<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>消费数据：</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">kubectl -n kafka run kafka-consumer -ti <span class="token punctuation">\</span>
+  --image<span class="token operator">=</span>quay.io/strimzi/kafka:0.30.0-kafka-3.2.0 <span class="token punctuation">\</span>
+  --rm<span class="token operator">=</span>true --restart<span class="token operator">=</span>Never -- bin/kafka-console-consumer.sh <span class="token punctuation">\</span>
+  --bootstrap-server mykafka-kafka-bootstrap:9092 <span class="token punctuation">\</span>
+  --topic my-topic --from-beginning<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h3 id="对外暴露服务"><a href="#对外暴露服务" class="headerlink" title="对外暴露服务"></a>对外暴露服务</h3><p>安装好集群默认只能k8s集群内部访问，如果需要对外暴露，修改配置文件listeners，如下：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">listeners</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> plain
+    <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">9092</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> internal
+    <span class="token key atrule">tls</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> tls
+    <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">9093</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> internal
+    <span class="token key atrule">tls</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> external <span class="token comment"># 增加外部访问用的linstener</span>
+    <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">9094</span> <span class="token comment">#端口</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> nodeport <span class="token comment"># nodeport类型</span>
+    <span class="token key atrule">tls</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+    <span class="token key atrule">configuration</span><span class="token punctuation">:</span>
+      <span class="token key atrule">bootstrap</span><span class="token punctuation">:</span>
+        <span class="token key atrule">nodePort</span><span class="token punctuation">:</span> <span class="token number">32094</span> <span class="token comment"># 指定nodeport端口，不指定会随机分配</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>执行<code>kubectl apply -f kafka-persistent-single.yaml</code>使配置生效，kafka operator会自动帮你重启kafka。</p>
+<p>查看svc：</p>
+<p><img src="/images/image-20220729143920528.png"></p>
+<p>也可以使用<code>kubectl get kafka -n kafka -o yaml</code>看到监听信息：</p>
+<p><img src="/images/image-20220729144142604.png"></p>
+<p>上图中的<code>10.211.55.5</code>等三个ip是我服务器的ip。为了验证外部可访问，我另外找了一台机器，下载了一个原生的kafka包，消费一下：</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">./kafka-console-consumer.sh --bootstrap-server<span class="token operator">=</span><span class="token number">10.211</span>.55.5:32094,10.211.55.4:32094,10.211.55.3:32094 <span class="token punctuation">\</span>
+--topic my-topic --from-beginning<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>消费成功：</p>
+<p><img src="/images/image-20220729144914260.png"></p>
+<p>但如果你是用云服务，有一点需要注意：以上对外暴露的方法，只能使用云服务器的内网ip进行访问，无法使用公网ip访问，因为对于云服务器本身来说，它是感知不到公网ip的，而且安装k8s时用的也是内网ip进行安装。</p>
+<p>为了能够用公网ip进行访问，可以按如下方法配置：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">listeners</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> plain
+    <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">9092</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> internal
+    <span class="token key atrule">tls</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> tls
+    <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">9093</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> internal
+    <span class="token key atrule">tls</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> external
+    <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">9094</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> nodeport
+    <span class="token key atrule">tls</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+    <span class="token key atrule">configuration</span><span class="token punctuation">:</span>
+      <span class="token key atrule">bootstrap</span><span class="token punctuation">:</span>
+        <span class="token key atrule">nodePort</span><span class="token punctuation">:</span> <span class="token number">32094</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> pubexternal <span class="token comment"># 公网访问的</span>
+    <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">9095</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> nodeport
+    <span class="token key atrule">tls</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+    <span class="token key atrule">configuration</span><span class="token punctuation">:</span>
+      <span class="token key atrule">bootstrap</span><span class="token punctuation">:</span>
+        <span class="token key atrule">nodePort</span><span class="token punctuation">:</span> <span class="token number">32095</span> <span class="token comment"># nodeport端口</span>
+      <span class="token key atrule">brokers</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">broker</span><span class="token punctuation">:</span> <span class="token number">0</span>
+        <span class="token key atrule">advertisedHost</span><span class="token punctuation">:</span> 10.10.10.1 <span class="token comment"># 公网ip</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">broker</span><span class="token punctuation">:</span> <span class="token number">1</span>
+        <span class="token key atrule">advertisedHost</span><span class="token punctuation">:</span> 10.10.10.2 <span class="token comment"># 公网ip</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">broker</span><span class="token punctuation">:</span> <span class="token number">2</span>
+        <span class="token key atrule">advertisedHost</span><span class="token punctuation">:</span> 10.10.10.3 <span class="token comment"># 公网ip</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><code>kubectl get kafka -n kafka -o yaml</code>看到监听信息：</p>
+<p><img src="/images/image-20220729150338610.png"></p>
+<h3 id="Broker配置"><a href="#Broker配置" class="headerlink" title="Broker配置"></a>Broker配置</h3><p>安装集群时用的yaml中就包含了kafka broker的配置：</p>
+<p><img src="/images/image-20220729151519036.png"></p>
+<p>具体配置项直接参考kafka官网：<a target="_blank" rel="noopener" href="https://kafka.apache.org/documentation/#brokerconfigs">Apache Kafka</a></p>
+<p>不过有小部分配置项是不支持在这里修改：</p>
+<p><img src="/images/image-20220729151652203.png"></p>
+<p>为了验证配置，我们将“自动创建topic”设置为false：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">config</span><span class="token punctuation">:</span>
+  <span class="token key atrule">auto.create.topics.enable</span><span class="token punctuation">:</span> <span class="token boolean important">false</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>kafka启动时日志会打印配置，可以查看日志：</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">kubectl logs mykafka-kafka-0 -n kafka<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>使用不存在的topic来生产数据，发现报<code>UNKNOWN_TOPIC_OR_PARTITION</code>错误，可见配置生效</p>
+<p><img src="/images/image-20220729152800426.png"></p>
+<h2 id="Operator"><a href="#Operator" class="headerlink" title="Operator"></a>Operator</h2><p>我们安装了Operator之后，通过<code>kubectl get pods -n kafka</code>可以看到有两个operator的pod：</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">AME                                        READY   STATUS    RESTARTS   AGE
+mykafka-entity-operator-df697469d-lmwtq        <span class="token number">3</span>/3     Running   <span class="token number">0</span>          11h
+mykafka-kafka-0                                <span class="token number">1</span>/1     Running   <span class="token number">0</span>          11h
+mykafka-kafka-exporter-5db54494d6-f2mm8        <span class="token number">1</span>/1     Running   <span class="token number">0</span>          11h
+mykafka-zookeeper-0                            <span class="token number">1</span>/1     Running   <span class="token number">0</span>          11h
+strimzi-cluster-operator-8677464d48-7dgf7      <span class="token number">1</span>/1     Running   <span class="token number">0</span>          32h<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>其中cluster-operator就是帮助我们创建集群的，而entity-operator中包含了topic operator和user operator</p>
+<h3 id="TopicOperator"><a href="#TopicOperator" class="headerlink" title="TopicOperator"></a>TopicOperator</h3><p>topic operator的架构图如下：</p>
+<p><img src="/images/image-20220731085721038.png">我们可以通过创建一个KafkaTopic类型的K8S资源，来让TopicOperator帮你自动创建主题：</p>
+<p><code>topic.yaml</code>：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> kafka.strimzi.io/v1beta2
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> KafkaTopic
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> test<span class="token punctuation">-</span>topic <span class="token comment">#主题名称</span>
+  <span class="token key atrule">namespace</span><span class="token punctuation">:</span> kafka 
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">strimzi.io/cluster</span><span class="token punctuation">:</span> <span class="token string">"mykafka"</span> <span class="token comment"># 集群名</span>
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">partitions</span><span class="token punctuation">:</span> <span class="token number">3</span> <span class="token comment"># 分区数</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">1</span> <span class="token comment"># 副本数</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">kubectl apply -f topic.yaml<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>比较牛逼的是，如果你以后想增加主题的分区数，只需要修改topic.yaml中的<code>spec.partitions</code>再apply即可。注意分区数只能增加，不能减少，replicas不能修改。</p>
+<p>要小心的是，如果你执行了<code>kubectl delete -f topic.yaml</code>，这个主题就被删掉了，因此如果你使用这种方式来管理topic，一定要小心。</p>
+<h3 id="UserOperator"><a href="#UserOperator" class="headerlink" title="UserOperator"></a>UserOperator</h3><p>同理，user operator可以帮助你管理kafka用户，可以参考官方给的例子：<a target="_blank" rel="noopener" href="https://github.com/strimzi/strimzi-kafka-operator/blob/main/examples/user/kafka-user.yaml">strimzi-kafka-operator/kafka-user.yaml</a></p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> kafka.strimzi.io/v1beta2
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> KafkaUser
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>user
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">strimzi.io/cluster</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>cluster
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">authentication</span><span class="token punctuation">:</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> tls
+  <span class="token key atrule">authorization</span><span class="token punctuation">:</span>
+    <span class="token key atrule">type</span><span class="token punctuation">:</span> simple
+    <span class="token key atrule">acls</span><span class="token punctuation">:</span>
+      <span class="token comment"># Example consumer Acls for topic my-topic using consumer group my-group</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">resource</span><span class="token punctuation">:</span>
+          <span class="token key atrule">type</span><span class="token punctuation">:</span> topic
+          <span class="token key atrule">name</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>topic
+          <span class="token key atrule">patternType</span><span class="token punctuation">:</span> literal
+        <span class="token key atrule">operation</span><span class="token punctuation">:</span> Read
+        <span class="token key atrule">host</span><span class="token punctuation">:</span> <span class="token string">"*"</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">resource</span><span class="token punctuation">:</span>
+          <span class="token key atrule">type</span><span class="token punctuation">:</span> topic
+          <span class="token key atrule">name</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>topic
+          <span class="token key atrule">patternType</span><span class="token punctuation">:</span> literal
+        <span class="token key atrule">operation</span><span class="token punctuation">:</span> Describe
+        <span class="token key atrule">host</span><span class="token punctuation">:</span> <span class="token string">"*"</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">resource</span><span class="token punctuation">:</span>
+          <span class="token key atrule">type</span><span class="token punctuation">:</span> group
+          <span class="token key atrule">name</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>group
+          <span class="token key atrule">patternType</span><span class="token punctuation">:</span> literal
+        <span class="token key atrule">operation</span><span class="token punctuation">:</span> Read
+        <span class="token key atrule">host</span><span class="token punctuation">:</span> <span class="token string">"*"</span>
+      <span class="token comment"># Example Producer Acls for topic my-topic</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">resource</span><span class="token punctuation">:</span>
+          <span class="token key atrule">type</span><span class="token punctuation">:</span> topic
+          <span class="token key atrule">name</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>topic
+          <span class="token key atrule">patternType</span><span class="token punctuation">:</span> literal
+        <span class="token key atrule">operation</span><span class="token punctuation">:</span> Write
+        <span class="token key atrule">host</span><span class="token punctuation">:</span> <span class="token string">"*"</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">resource</span><span class="token punctuation">:</span>
+          <span class="token key atrule">type</span><span class="token punctuation">:</span> topic
+          <span class="token key atrule">name</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>topic
+          <span class="token key atrule">patternType</span><span class="token punctuation">:</span> literal
+        <span class="token key atrule">operation</span><span class="token punctuation">:</span> Create
+        <span class="token key atrule">host</span><span class="token punctuation">:</span> <span class="token string">"*"</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">resource</span><span class="token punctuation">:</span>
+          <span class="token key atrule">type</span><span class="token punctuation">:</span> topic
+          <span class="token key atrule">name</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>topic
+          <span class="token key atrule">patternType</span><span class="token punctuation">:</span> literal
+        <span class="token key atrule">operation</span><span class="token punctuation">:</span> Describe
+        <span class="token key atrule">host</span><span class="token punctuation">:</span> <span class="token string">"*"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="Kafka-Bridge"><a href="#Kafka-Bridge" class="headerlink" title="Kafka Bridge"></a>Kafka Bridge</h2><p>这是一个通过http来使用kafka的桥接组件，我们可以创建一个bridge：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">kind</span><span class="token punctuation">:</span> KafkaBridge
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>bridge
+  <span class="token key atrule">namespace</span><span class="token punctuation">:</span> kafka
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">1</span>
+  <span class="token key atrule">bootstrapServers</span><span class="token punctuation">:</span> mykafka<span class="token punctuation">-</span>kafka<span class="token punctuation">-</span>bootstrap<span class="token punctuation">:</span><span class="token number">9092</span>
+  <span class="token key atrule">http</span><span class="token punctuation">:</span>
+    <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">8080</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>然后会多一个bridge的pod，为了方便测试，我们直接使用<code>kubectl get pods -n kafka -o wide</code>查看pod的ip（你也可以创建service）。</p>
+<p>然后使用http接口查看bridge支持哪些api：</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">curl</span> <span class="token number">100.72</span>.162.179:8080/openapi<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>这个接口会返回一个JSON格式的openapi，从中可以看到所有api定义。</p>
+<p>例如查看topic列表：</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">curl</span> -s <span class="token number">100.72</span>.162.179:8080/topics <span class="token operator">|</span> jq <span class="token builtin class-name">.</span>
+<span class="token punctuation">[</span>
+  <span class="token string">"__strimzi_store_topic"</span>,
+  <span class="token string">"test-topic"</span>,
+  <span class="token string">"__strimzi-topic-operator-kstreams-topic-store-changelog"</span>
+<span class="token punctuation">]</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>查看指定topic：</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">curl</span> -s <span class="token number">100.72</span>.162.179:8080/topics/test-topic <span class="token operator">|</span> jq <span class="token builtin class-name">.</span>
+<span class="token punctuation">{</span>
+  <span class="token string">"name"</span><span class="token builtin class-name">:</span> <span class="token string">"test-topic"</span>,
+  <span class="token string">"configs"</span><span class="token builtin class-name">:</span> <span class="token punctuation">{</span>
+    <span class="token string">"compression.type"</span><span class="token builtin class-name">:</span> <span class="token string">"producer"</span>,
+    <span class="token string">"leader.replication.throttled.replicas"</span><span class="token builtin class-name">:</span> <span class="token string">""</span>,
+    <span class="token string">"message.downconversion.enable"</span><span class="token builtin class-name">:</span> <span class="token string">"true"</span>,
+    <span class="token string">"min.insync.replicas"</span><span class="token builtin class-name">:</span> <span class="token string">"1"</span>,
+    <span class="token string">"segment.jitter.ms"</span><span class="token builtin class-name">:</span> <span class="token string">"0"</span>,
+    <span class="token string">"cleanup.policy"</span><span class="token builtin class-name">:</span> <span class="token string">"delete"</span>,
+    <span class="token string">"flush.ms"</span><span class="token builtin class-name">:</span> <span class="token string">"9223372036854775807"</span>,
+    <span class="token string">"follower.replication.throttled.replicas"</span><span class="token builtin class-name">:</span> <span class="token string">""</span>,
+    <span class="token string">"segment.bytes"</span><span class="token builtin class-name">:</span> <span class="token string">"1073741824"</span>,
+    <span class="token string">"retention.ms"</span><span class="token builtin class-name">:</span> <span class="token string">"604800000"</span>,
+    <span class="token string">"flush.messages"</span><span class="token builtin class-name">:</span> <span class="token string">"9223372036854775807"</span>,
+    <span class="token string">"message.format.version"</span><span class="token builtin class-name">:</span> <span class="token string">"3.0-IV1"</span>,
+    <span class="token string">"max.compaction.lag.ms"</span><span class="token builtin class-name">:</span> <span class="token string">"9223372036854775807"</span>,
+    <span class="token string">"file.delete.delay.ms"</span><span class="token builtin class-name">:</span> <span class="token string">"60000"</span>,
+    <span class="token string">"max.message.bytes"</span><span class="token builtin class-name">:</span> <span class="token string">"1048588"</span>,
+    <span class="token string">"min.compaction.lag.ms"</span><span class="token builtin class-name">:</span> <span class="token string">"0"</span>,
+    <span class="token string">"message.timestamp.type"</span><span class="token builtin class-name">:</span> <span class="token string">"CreateTime"</span>,
+    <span class="token string">"preallocate"</span><span class="token builtin class-name">:</span> <span class="token string">"false"</span>,
+    <span class="token string">"min.cleanable.dirty.ratio"</span><span class="token builtin class-name">:</span> <span class="token string">"0.5"</span>,
+    <span class="token string">"index.interval.bytes"</span><span class="token builtin class-name">:</span> <span class="token string">"4096"</span>,
+    <span class="token string">"unclean.leader.election.enable"</span><span class="token builtin class-name">:</span> <span class="token string">"false"</span>,
+    <span class="token string">"retention.bytes"</span><span class="token builtin class-name">:</span> <span class="token string">"-1"</span>,
+    <span class="token string">"delete.retention.ms"</span><span class="token builtin class-name">:</span> <span class="token string">"86400000"</span>,
+    <span class="token string">"segment.ms"</span><span class="token builtin class-name">:</span> <span class="token string">"604800000"</span>,
+    <span class="token string">"message.timestamp.difference.max.ms"</span><span class="token builtin class-name">:</span> <span class="token string">"9223372036854775807"</span>,
+    <span class="token string">"segment.index.bytes"</span><span class="token builtin class-name">:</span> <span class="token string">"10485760"</span>
+  <span class="token punctuation">}</span>,
+  <span class="token string">"partitions"</span><span class="token builtin class-name">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      <span class="token string">"partition"</span><span class="token builtin class-name">:</span> <span class="token number">0</span>,
+      <span class="token string">"leader"</span><span class="token builtin class-name">:</span> <span class="token number">0</span>,
+      <span class="token string">"replicas"</span><span class="token builtin class-name">:</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span>
+          <span class="token string">"broker"</span><span class="token builtin class-name">:</span> <span class="token number">0</span>,
+          <span class="token string">"leader"</span><span class="token builtin class-name">:</span> true,
+          <span class="token string">"in_sync"</span><span class="token builtin class-name">:</span> <span class="token boolean">true</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>,
+    <span class="token punctuation">{</span>
+      <span class="token string">"partition"</span><span class="token builtin class-name">:</span> <span class="token number">1</span>,
+      <span class="token string">"leader"</span><span class="token builtin class-name">:</span> <span class="token number">0</span>,
+      <span class="token string">"replicas"</span><span class="token builtin class-name">:</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span>
+          <span class="token string">"broker"</span><span class="token builtin class-name">:</span> <span class="token number">0</span>,
+          <span class="token string">"leader"</span><span class="token builtin class-name">:</span> true,
+          <span class="token string">"in_sync"</span><span class="token builtin class-name">:</span> <span class="token boolean">true</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>,
+    <span class="token punctuation">{</span>
+      <span class="token string">"partition"</span><span class="token builtin class-name">:</span> <span class="token number">2</span>,
+      <span class="token string">"leader"</span><span class="token builtin class-name">:</span> <span class="token number">0</span>,
+      <span class="token string">"replicas"</span><span class="token builtin class-name">:</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span>
+          <span class="token string">"broker"</span><span class="token builtin class-name">:</span> <span class="token number">0</span>,
+          <span class="token string">"leader"</span><span class="token builtin class-name">:</span> true,
+          <span class="token string">"in_sync"</span><span class="token builtin class-name">:</span> <span class="token boolean">true</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>,
+    <span class="token punctuation">{</span>
+      <span class="token string">"partition"</span><span class="token builtin class-name">:</span> <span class="token number">3</span>,
+      <span class="token string">"leader"</span><span class="token builtin class-name">:</span> <span class="token number">0</span>,
+      <span class="token string">"replicas"</span><span class="token builtin class-name">:</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span>
+          <span class="token string">"broker"</span><span class="token builtin class-name">:</span> <span class="token number">0</span>,
+          <span class="token string">"leader"</span><span class="token builtin class-name">:</span> true,
+          <span class="token string">"in_sync"</span><span class="token builtin class-name">:</span> <span class="token boolean">true</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">]</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>更多信息参考官网：<a target="_blank" rel="noopener" href="https://strimzi.io/docs/bridge/latest/">Strimzi Kafka Bridge Documentation (0.21.6)</a></p>
+<h2 id="监控"><a href="#监控" class="headerlink" title="监控"></a>监控</h2><h3 id="部署监控系统"><a href="#部署监控系统" class="headerlink" title="部署监控系统"></a>部署监控系统</h3><p>首先按照<a href="/posts/5019">使用Prometheus-Operator搭建监控集群</a>先部署好一套监控系统</p>
+<h3 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h3><p>根据官方提供的<a target="_blank" rel="noopener" href="https://github.com/strimzi/strimzi-kafka-operator/blob/main/examples/metrics/kafka-metrics.yaml">kafka-metrics.yaml</a>修改之前创建kafka集群时用的<code>kafka-persistent-single.yaml</code>，修改后如下（注意看注释的部分，其他部分和文章前半部分有所不同，因为我的试验环境换了）：</p>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> kafka.strimzi.io/v1beta2
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Kafka
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> real
+  <span class="token key atrule">namespace</span><span class="token punctuation">:</span> kafka
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">kafka</span><span class="token punctuation">:</span>
+    <span class="token key atrule">version</span><span class="token punctuation">:</span> 3.2.0
+    <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">1</span>
+    <span class="token key atrule">listeners</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> plain
+        <span class="token key atrule">type</span><span class="token punctuation">:</span> internal
+        <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">9092</span>
+        <span class="token key atrule">tls</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> external
+        <span class="token key atrule">type</span><span class="token punctuation">:</span> nodeport
+        <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">32094</span>
+        <span class="token key atrule">tls</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+        <span class="token key atrule">configuration</span><span class="token punctuation">:</span>
+          <span class="token key atrule">bootstrap</span><span class="token punctuation">:</span>
+            <span class="token key atrule">nodePort</span><span class="token punctuation">:</span> <span class="token number">32094</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> tls
+        <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">9093</span>
+        <span class="token key atrule">type</span><span class="token punctuation">:</span> nodeport
+        <span class="token key atrule">tls</span><span class="token punctuation">:</span> <span class="token boolean important">true</span>
+    <span class="token key atrule">config</span><span class="token punctuation">:</span>
+      <span class="token key atrule">offsets.topic.replication.factor</span><span class="token punctuation">:</span> <span class="token number">1</span>
+      <span class="token key atrule">transaction.state.log.replication.factor</span><span class="token punctuation">:</span> <span class="token number">1</span>
+      <span class="token key atrule">transaction.state.log.min.isr</span><span class="token punctuation">:</span> <span class="token number">1</span>
+      <span class="token key atrule">default.replication.factor</span><span class="token punctuation">:</span> <span class="token number">1</span>
+      <span class="token key atrule">min.insync.replicas</span><span class="token punctuation">:</span> <span class="token number">1</span>
+      <span class="token key atrule">inter.broker.protocol.version</span><span class="token punctuation">:</span> <span class="token string">"3.2"</span>
+    <span class="token key atrule">storage</span><span class="token punctuation">:</span>
+      <span class="token key atrule">type</span><span class="token punctuation">:</span> jbod
+      <span class="token key atrule">volumes</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">id</span><span class="token punctuation">:</span> <span class="token number">0</span>
+        <span class="token key atrule">type</span><span class="token punctuation">:</span> persistent<span class="token punctuation">-</span>claim
+        <span class="token key atrule">size</span><span class="token punctuation">:</span> 100Gi
+        <span class="token key atrule">class</span><span class="token punctuation">:</span> local<span class="token punctuation">-</span>path
+        <span class="token key atrule">deleteClaim</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+    <span class="token key atrule">metricsConfig</span><span class="token punctuation">:</span> <span class="token comment"># kafka监控</span>
+      <span class="token key atrule">type</span><span class="token punctuation">:</span> jmxPrometheusExporter
+      <span class="token key atrule">valueFrom</span><span class="token punctuation">:</span>
+        <span class="token key atrule">configMapKeyRef</span><span class="token punctuation">:</span>
+          <span class="token key atrule">name</span><span class="token punctuation">:</span> kafka<span class="token punctuation">-</span>metrics
+          <span class="token key atrule">key</span><span class="token punctuation">:</span> kafka<span class="token punctuation">-</span>metrics<span class="token punctuation">-</span>config.yml
+  <span class="token key atrule">zookeeper</span><span class="token punctuation">:</span>
+    <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">3</span>
+    <span class="token key atrule">storage</span><span class="token punctuation">:</span>
+      <span class="token key atrule">type</span><span class="token punctuation">:</span> persistent<span class="token punctuation">-</span>claim
+      <span class="token key atrule">size</span><span class="token punctuation">:</span> 100Gi
+      <span class="token key atrule">class</span><span class="token punctuation">:</span> local<span class="token punctuation">-</span>path
+      <span class="token key atrule">deleteClaim</span><span class="token punctuation">:</span> <span class="token boolean important">false</span>
+     <span class="token key atrule">metricsConfig</span><span class="token punctuation">:</span> <span class="token comment"># zk监控</span>
+      <span class="token key atrule">type</span><span class="token punctuation">:</span> jmxPrometheusExporter
+      <span class="token key atrule">valueFrom</span><span class="token punctuation">:</span>
+        <span class="token key atrule">configMapKeyRef</span><span class="token punctuation">:</span>
+          <span class="token key atrule">name</span><span class="token punctuation">:</span> kafka<span class="token punctuation">-</span>metrics
+          <span class="token key atrule">key</span><span class="token punctuation">:</span> zookeeper<span class="token punctuation">-</span>metrics<span class="token punctuation">-</span>config.yml
+  <span class="token key atrule">entityOperator</span><span class="token punctuation">:</span>
+    <span class="token key atrule">topicOperator</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+    <span class="token key atrule">userOperator</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">}</span>
+  <span class="token key atrule">kafkaExporter</span><span class="token punctuation">:</span> <span class="token comment"># 增加kafka exporter监控</span>
+    <span class="token key atrule">topicRegex</span><span class="token punctuation">:</span> <span class="token string">".*"</span>
+    <span class="token key atrule">groupRegex</span><span class="token punctuation">:</span> <span class="token string">".*"</span>
+<span class="token comment"># 以下都是新增的</span>
+<span class="token punctuation">---</span>
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> ConfigMap
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> kafka<span class="token punctuation">-</span>metrics
+  <span class="token key atrule">namespace</span><span class="token punctuation">:</span> kafka <span class="token comment"># 这里要加上命名空间</span>
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> strimzi
+<span class="token key atrule">data</span><span class="token punctuation">:</span>
+  <span class="token key atrule">kafka-metrics-config.yml</span><span class="token punctuation">:</span> <span class="token punctuation">|</span><span class="token scalar string">
+    # See https://github.com/prometheus/jmx_exporter for more info about JMX Prometheus Exporter metrics
+    lowercaseOutputName: true
+    rules:
+    # Special cases and very specific rules
+    - pattern: kafka.server&lt;type=(.+), name=(.+), clientId=(.+), topic=(.+), partition=(.*)&gt;&lt;&gt;Value
+      name: kafka_server_$1_$2
+      type: GAUGE
+      labels:
+       clientId: "$3"
+       topic: "$4"
+       partition: "$5"
+    - pattern: kafka.server&lt;type=(.+), name=(.+), clientId=(.+), brokerHost=(.+), brokerPort=(.+)&gt;&lt;&gt;Value
+      name: kafka_server_$1_$2
+      type: GAUGE
+      labels:
+       clientId: "$3"
+       broker: "$4:$5"
+    - pattern: kafka.server&lt;type=(.+), cipher=(.+), protocol=(.+), listener=(.+), networkProcessor=(.+)&gt;&lt;&gt;connections
+      name: kafka_server_$1_connections_tls_info
+      type: GAUGE
+      labels:
+        cipher: "$2"
+        protocol: "$3"
+        listener: "$4"
+        networkProcessor: "$5"
+    - pattern: kafka.server&lt;type=(.+), clientSoftwareName=(.+), clientSoftwareVersion=(.+), listener=(.+), networkProcessor=(.+)&gt;&lt;&gt;connections
+      name: kafka_server_$1_connections_software
+      type: GAUGE
+      labels:
+        clientSoftwareName: "$2"
+        clientSoftwareVersion: "$3"
+        listener: "$4"
+        networkProcessor: "$5"
+    - pattern: "kafka.server&lt;type=(.+), listener=(.+), networkProcessor=(.+)&gt;&lt;&gt;(.+):"
+      name: kafka_server_$1_$4
+      type: GAUGE
+      labels:
+       listener: "$2"
+       networkProcessor: "$3"
+    - pattern: kafka.server&lt;type=(.+), listener=(.+), networkProcessor=(.+)&gt;&lt;&gt;(.+)
+      name: kafka_server_$1_$4
+      type: GAUGE
+      labels:
+       listener: "$2"
+       networkProcessor: "$3"
+    # Some percent metrics use MeanRate attribute
+    # Ex) kafka.server&lt;type=(KafkaRequestHandlerPool), name=(RequestHandlerAvgIdlePercent)&gt;&lt;&gt;MeanRate
+    - pattern: kafka.(\w+)&lt;type=(.+), name=(.+)Percent\w*&gt;&lt;&gt;MeanRate
+      name: kafka_$1_$2_$3_percent
+      type: GAUGE
+    # Generic gauges for percents
+    - pattern: kafka.(\w+)&lt;type=(.+), name=(.+)Percent\w*&gt;&lt;&gt;Value
+      name: kafka_$1_$2_$3_percent
+      type: GAUGE
+    - pattern: kafka.(\w+)&lt;type=(.+), name=(.+)Percent\w*, (.+)=(.+)&gt;&lt;&gt;Value
+      name: kafka_$1_$2_$3_percent
+      type: GAUGE
+      labels:
+        "$4": "$5"
+    # Generic per-second counters with 0-2 key/value pairs
+    - pattern: kafka.(\w+)&lt;type=(.+), name=(.+)PerSec\w*, (.+)=(.+), (.+)=(.+)&gt;&lt;&gt;Count
+      name: kafka_$1_$2_$3_total
+      type: COUNTER
+      labels:
+        "$4": "$5"
+        "$6": "$7"
+    - pattern: kafka.(\w+)&lt;type=(.+), name=(.+)PerSec\w*, (.+)=(.+)&gt;&lt;&gt;Count
+      name: kafka_$1_$2_$3_total
+      type: COUNTER
+      labels:
+        "$4": "$5"
+    - pattern: kafka.(\w+)&lt;type=(.+), name=(.+)PerSec\w*&gt;&lt;&gt;Count
+      name: kafka_$1_$2_$3_total
+      type: COUNTER
+    # Generic gauges with 0-2 key/value pairs
+    - pattern: kafka.(\w+)&lt;type=(.+), name=(.+), (.+)=(.+), (.+)=(.+)&gt;&lt;&gt;Value
+      name: kafka_$1_$2_$3
+      type: GAUGE
+      labels:
+        "$4": "$5"
+        "$6": "$7"
+    - pattern: kafka.(\w+)&lt;type=(.+), name=(.+), (.+)=(.+)&gt;&lt;&gt;Value
+      name: kafka_$1_$2_$3
+      type: GAUGE
+      labels:
+        "$4": "$5"
+    - pattern: kafka.(\w+)&lt;type=(.+), name=(.+)&gt;&lt;&gt;Value
+      name: kafka_$1_$2_$3
+      type: GAUGE
+    # Emulate Prometheus 'Summary' metrics for the exported 'Histogram's.
+    # Note that these are missing the '_sum' metric!
+    - pattern: kafka.(\w+)&lt;type=(.+), name=(.+), (.+)=(.+), (.+)=(.+)&gt;&lt;&gt;Count
+      name: kafka_$1_$2_$3_count
+      type: COUNTER
+      labels:
+        "$4": "$5"
+        "$6": "$7"
+    - pattern: kafka.(\w+)&lt;type=(.+), name=(.+), (.+)=(.*), (.+)=(.+)&gt;&lt;&gt;(\d+)thPercentile
+      name: kafka_$1_$2_$3
+      type: GAUGE
+      labels:
+        "$4": "$5"
+        "$6": "$7"
+        quantile: "0.$8"
+    - pattern: kafka.(\w+)&lt;type=(.+), name=(.+), (.+)=(.+)&gt;&lt;&gt;Count
+      name: kafka_$1_$2_$3_count
+      type: COUNTER
+      labels:
+        "$4": "$5"
+    - pattern: kafka.(\w+)&lt;type=(.+), name=(.+), (.+)=(.*)&gt;&lt;&gt;(\d+)thPercentile
+      name: kafka_$1_$2_$3
+      type: GAUGE
+      labels:
+        "$4": "$5"
+        quantile: "0.$6"
+    - pattern: kafka.(\w+)&lt;type=(.+), name=(.+)&gt;&lt;&gt;Count
+      name: kafka_$1_$2_$3_count
+      type: COUNTER
+    - pattern: kafka.(\w+)&lt;type=(.+), name=(.+)&gt;&lt;&gt;(\d+)thPercentile
+      name: kafka_$1_$2_$3
+      type: GAUGE
+      labels:
+        quantile: "0.$4"</span>
+  <span class="token key atrule">zookeeper-metrics-config.yml</span><span class="token punctuation">:</span> <span class="token punctuation">|</span><span class="token scalar string">
+    # See https://github.com/prometheus/jmx_exporter for more info about JMX Prometheus Exporter metrics
+    lowercaseOutputName: true
+    rules:
+    # replicated Zookeeper
+    - pattern: "org.apache.ZooKeeperService&lt;name0=ReplicatedServer_id(\\d+)&gt;&lt;&gt;(\\w+)"
+      name: "zookeeper_$2"
+      type: GAUGE
+    - pattern: "org.apache.ZooKeeperService&lt;name0=ReplicatedServer_id(\\d+), name1=replica.(\\d+)&gt;&lt;&gt;(\\w+)"
+      name: "zookeeper_$3"
+      type: GAUGE
+      labels:
+        replicaId: "$2"
+    - pattern: "org.apache.ZooKeeperService&lt;name0=ReplicatedServer_id(\\d+), name1=replica.(\\d+), name2=(\\w+)&gt;&lt;&gt;(Packets\\w+)"
+      name: "zookeeper_$4"
+      type: COUNTER
+      labels:
+        replicaId: "$2"
+        memberType: "$3"
+    - pattern: "org.apache.ZooKeeperService&lt;name0=ReplicatedServer_id(\\d+), name1=replica.(\\d+), name2=(\\w+)&gt;&lt;&gt;(\\w+)"
+      name: "zookeeper_$4"
+      type: GAUGE
+      labels:
+        replicaId: "$2"
+        memberType: "$3"
+    - pattern: "org.apache.ZooKeeperService&lt;name0=ReplicatedServer_id(\\d+), name1=replica.(\\d+), name2=(\\w+), name3=(\\w+)&gt;&lt;&gt;(\\w+)"
+      name: "zookeeper_$4_$5"
+      type: GAUGE
+      labels:
+        replicaId: "$2"
+        memberType: "$3"</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>执行<code>kubectl apply -f kafka-persistent-single.yaml </code> 自动重启kafka，这样kafka监控接口就暴露出来了。</p>
+<p>下载<a target="_blank" rel="noopener" href="https://github.com/strimzi/strimzi-kafka-operator/blob/main/examples/metrics/prometheus-install/strimzi-pod-monitor.yaml">strimzi-pod-monitor.yaml</a>，让prometheus自动发现并拉取kafka监控数据：</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">kubectl apply -f strimzi-pod-monitor.yaml<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="Grafana-Dashboard"><a href="#Grafana-Dashboard" class="headerlink" title="Grafana Dashboard"></a>Grafana Dashboard</h3><p>打开grafana页面，导入官方提供的dashboard：<a target="_blank" rel="noopener" href="https://github.com/strimzi/strimzi-kafka-operator/tree/main/examples/metrics/grafana-dashboards">strimzi-kafka-operator/examples/metrics/grafana-dashboards at main · strimzi/strimzi-kafka-operator (github.com)</a></p>
+<p>我只导入了我需要的这几个</p>
+<p><img src="/images/image-20220730210443912.png"></p>
+<p>预览效果如下：</p>
+<p><img src="/images/image-20220730212342769.png"></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://strimzi.io/docs/operators/in-development/configuring.html">Configuring Strimzi (In Development)</a></p>
+
+                
+            </div>
+            <!-- <hr/> -->
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">周君</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="http://www.javajun.net/posts/55588/">http://www.javajun.net/posts/55588/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/about" target="_blank">周君</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/">
+                                    <span class="chip bg-color">云原生</span>
+                                </a>
+                            
+                                <a href="/tags/k8s/">
+                                    <span class="chip bg-color">k8s</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+                
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        <div class="col s12 m6">
+            
+                <a href="/posts/5019/">
+                    <span class="">上一篇: 使用Prometheus-Operator搭建监控集群</span>
+                </a>
+            
+        </div>
+        <div class="col s12 m6" style="text-align: right">
+            
+                <a href="/posts/16358/">
+                    <span class="">下一篇: 使用Pocal-Path-Provisioner动态创建本地磁盘pv</span>
+                </a>
+            
+        </div>
+        
+    </div>
+</article>
+
+            </div>
+            
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.4rem;
+        line-height: 38px;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.png" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+
+            
+            
+        </div>
+    </div>
+
+    
+        <link rel="stylesheet" href="/libs/gitalk/gitalk.css">
+<link rel="stylesheet" href="/css/my-gitalk.css">
+
+<div class="card gitalk-card" data-aos="fade-up">
+    <div class="comment_headling" style="font-size: 20px; font-weight: 700; position: relative; padding-left: 20px; top: 15px; padding-bottom: 5px;">
+        <i class="fas fa-comments fa-fw" aria-hidden="true"></i>
+        <span>评论</span>
+    </div>
+    <div id="gitalk-container" class="card-content"></div>
+</div>
+
+<script src="/libs/gitalk/gitalk.min.js"></script>
+<script>
+    let gitalk = new Gitalk({
+        clientID: 'f23a6e4404e8041c9568',
+        clientSecret: 'b7e2563a05b69e89361514109bb08727a2295768',
+        repo: 'gitalk',
+        owner: 'itzhoujun',
+        admin: ["itzhoujun"],
+        id: '2022-07-28T14-51-22',
+        distractionFreeMode: false  // Facebook-like distraction free mode
+    });
+
+    gitalk.render('gitalk-container');
+</script>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+    </div>
+    
+</div>
+
+<!-- TOC 悬浮按钮. 
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+-->
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+                if(!$('#toc-aside').is(":hidden")){
+                    $('#main-content').addClass("margin-left-3");
+                }
+                
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+                $('#main-content').removeClass("margin-left-3");
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+                $mainContent.removeClass("margin-left-3");
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+                if($tocWidget.hasClass('toc-fixed')){
+                    $mainContent.addClass("margin-left-3");
+                }
+                
+            }
+            // fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+    <div class="container row center-align" style="margin-bottom: 0px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2019-2024</span>
+            
+            <span id="year">2019</span>
+            <a href="/about" target="_blank">周君</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
+                class="white-color">52.6k</span>&nbsp;字
+            
+            
+            
+            
+            
+            
+            <span id="busuanzi_container_site_pv">
+                |&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;<span id="busuanzi_value_site_pv"
+                    class="white-color"></span>&nbsp;次
+            </span>
+            
+            
+            <span id="busuanzi_container_site_uv">
+                |&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;<span id="busuanzi_value_site_uv"
+                    class="white-color"></span>&nbsp;人
+            </span>
+            
+            <br>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+
+
+    <a href="mailto:380472723@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=380472723" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 380472723" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    <!--腾讯兔小巢-->
+    
+    
+
+    
+
+    
+    <script type="text/javascript" src="/libs/background/ribbon-dynamic.js" async="async"></script>
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+
+</body>
+
+</html>

@@ -1,0 +1,2212 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="jvm,class文件">
+    <meta name="description" content="Java技术栈,MySQL,Spring源码,分布式系统,redis,kafka,JDK,算法与数据结构">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+    <title>class文件详解 | 爪哇君-Java技术栈</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+
+    <script src="/libs/jquery/jquery.min.js"></script>
+
+<meta name="generator" content="Hexo 5.4.0">
+<style>.github-emoji { position: relative; display: inline-block; width: 1.2em; min-height: 1.2em; overflow: hidden; vertical-align: top; color: transparent; }  .github-emoji > span { position: relative; z-index: 10; }  .github-emoji img, .github-emoji .fancybox { margin: 0 !important; padding: 0 !important; border: none !important; outline: none !important; text-decoration: none !important; user-select: none !important; cursor: auto !important; }  .github-emoji img { height: 1.2em !important; width: 1.2em !important; position: absolute !important; left: 50% !important; top: 50% !important; transform: translate(-50%, -50%) !important; user-select: none !important; cursor: auto !important; } .github-emoji-fallback { color: inherit; } .github-emoji-fallback img { opacity: 0 !important; }</style>
+</head>
+
+
+
+
+<body>
+    <header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <span class="logo-span">爪哇君-Java技术栈</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fas fa-bars"></i></a>
+<ul class="right nav-menu">
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/" class="waves-effect waves-light">
+      
+      <i class="fas fa-home" style="zoom: 0.6;"></i>
+      
+      <span>首页</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="" class="waves-effect waves-light">
+
+      
+      <span>数据结构与算法</span>
+      <i class="fas fa-chevron-down" aria-hidden="true" style="zoom: 0.6;"></i>
+    </a>
+    <ul class="sub-nav menus_item_child ">
+      
+      <li>
+        <a href="/posts/21238">
+          
+          <span>冒泡排序</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/51203">
+          
+          <span>选择排序</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/50190">
+          
+          <span>插入排序</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/63711">
+          
+          <span>归并排序</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/11306">
+          
+          <span>快速排序</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/58089">
+          
+          <span>计数排序</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/35215">
+          
+          <span>桶排序</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/48527">
+          
+          <span>基数排序</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/37273">
+          
+          <span>栈</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/26671">
+          
+          <span>队列</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/54862">
+          
+          <span>链表</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/44093">
+          
+          <span>跳表</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/45841">
+          
+          <span>二叉搜索树(BST)</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/20058">
+          
+          <span>平衡二叉树(AVL)</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/28769">
+          
+          <span>红黑树</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/18710">
+          
+          <span>B树与B+树</span>
+        </a>
+      </li>
+      
+    </ul>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/posts/26123" class="waves-effect waves-light">
+      
+      <span>JVM</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/posts/55427" class="waves-effect waves-light">
+      
+      <span>Spring源码</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/posts/46132" class="waves-effect waves-light">
+
+      
+      <span>设计模式</span>
+      <i class="fas fa-chevron-down" aria-hidden="true" style="zoom: 0.6;"></i>
+    </a>
+    <ul class="sub-nav menus_item_child ">
+      
+      <li>
+        <a href="/posts/46132">
+          
+          <span>单例模式</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46133">
+          
+          <span>简单工厂</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46134">
+          
+          <span>工厂方法</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46135">
+          
+          <span>抽象工厂</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46136">
+          
+          <span>原型模式</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46136">
+          
+          <span>建造者模式</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46138">
+          
+          <span>策略模式</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46139">
+          
+          <span>观察者模式</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46140">
+          
+          <span>命令模式</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46141">
+          
+          <span>模板模式</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/46142">
+          
+          <span>责任链模式</span>
+        </a>
+      </li>
+      
+    </ul>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/posts/112225" class="waves-effect waves-light">
+
+      
+      <span>云原生</span>
+      <i class="fas fa-chevron-down" aria-hidden="true" style="zoom: 0.6;"></i>
+    </a>
+    <ul class="sub-nav menus_item_child ">
+      
+      <li>
+        <a href="/posts/112225">
+          
+          <span>Sealos一键安装K8S</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/16358">
+          
+          <span>Local-Path-Provisioner动态创建本地磁盘pv</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/55588">
+          
+          <span>Strimzi-Kafka-Operator搭建Kafka集群</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/5019">
+          
+          <span>Prometheus-Operator搭建监控集群</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/35914">
+          
+          <span>Minio-Operator搭建MinIO集群</span>
+        </a>
+      </li>
+      
+    </ul>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/posts/51727" class="waves-effect waves-light">
+      
+      <span>MySQL</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="/posts/30673" class="waves-effect waves-light">
+      
+      <span>Kafka</span>
+    </a>
+    
+  </li>
+  
+  <li class="hide-on-med-and-down nav-item">
+    
+    <a href="" class="waves-effect waves-light">
+
+      
+      <span>其他</span>
+      <i class="fas fa-chevron-down" aria-hidden="true" style="zoom: 0.6;"></i>
+    </a>
+    <ul class="sub-nav menus_item_child ">
+      
+      <li>
+        <a href="/posts/21708">
+          
+          <span>Hexo + GitHub Pages 搭建你的个人博客</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/32786">
+          
+          <span>自定义域名+七牛云搭建免费hexo博客</span>
+        </a>
+      </li>
+      
+      <li>
+        <a href="/posts/13563">
+          
+          <span>基于Redis实现查找附近的人</span>
+        </a>
+      </li>
+      
+    </ul>
+    
+  </li>
+  
+  <li>
+    <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+      <i id="searchIcon" class="fas fa-search" title="搜索" style="zoom: 0.85;"></i>
+    </a>
+  </li>
+</ul>
+
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <div class="logo-name">爪哇君-Java技术栈</div>
+        <div class="logo-desc">
+            
+            Java技术栈,MySQL,Spring源码,分布式系统,redis,kafka,JDK,算法与数据结构
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li class="m-nav-item">
+	  
+		<a href="/" class="waves-effect waves-light">
+			
+			    <i class="fa-fw fas fa-home"></i>
+			
+			首页
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fas fa-fw fa-link"></i>
+			
+			数据结构与算法
+			<span class="m-icon"><i class="fas fa-chevron-right"></i></span>
+		</a>
+            <ul  style="background:  ;" >
+              
+                <li>
+
+                  <a href="/posts/21238 " style="margin-left:75px">
+				  
+		          <span>冒泡排序</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/51203 " style="margin-left:75px">
+				  
+		          <span>选择排序</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/50190 " style="margin-left:75px">
+				  
+		          <span>插入排序</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/63711 " style="margin-left:75px">
+				  
+		          <span>归并排序</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/11306 " style="margin-left:75px">
+				  
+		          <span>快速排序</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/58089 " style="margin-left:75px">
+				  
+		          <span>计数排序</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/35215 " style="margin-left:75px">
+				  
+		          <span>桶排序</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/48527 " style="margin-left:75px">
+				  
+		          <span>基数排序</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/37273 " style="margin-left:75px">
+				  
+		          <span>栈</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/26671 " style="margin-left:75px">
+				  
+		          <span>队列</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/54862 " style="margin-left:75px">
+				  
+		          <span>链表</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/44093 " style="margin-left:75px">
+				  
+		          <span>跳表</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/45841 " style="margin-left:75px">
+				  
+		          <span>二叉搜索树(BST)</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/20058 " style="margin-left:75px">
+				  
+		          <span>平衡二叉树(AVL)</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/28769 " style="margin-left:75px">
+				  
+		          <span>红黑树</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/18710 " style="margin-left:75px">
+				  
+		          <span>B树与B+树</span>
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/posts/26123" class="waves-effect waves-light">
+			
+				<i class="fas fa-fw fa-link"></i>
+			
+			JVM
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/posts/55427" class="waves-effect waves-light">
+			
+				<i class="fas fa-fw fa-link"></i>
+			
+			Spring源码
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fas fa-fw fa-link"></i>
+			
+			设计模式
+			<span class="m-icon"><i class="fas fa-chevron-right"></i></span>
+		</a>
+            <ul  style="background:  ;" >
+              
+                <li>
+
+                  <a href="/posts/46132 " style="margin-left:75px">
+				  
+		          <span>单例模式</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46133 " style="margin-left:75px">
+				  
+		          <span>简单工厂</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46134 " style="margin-left:75px">
+				  
+		          <span>工厂方法</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46135 " style="margin-left:75px">
+				  
+		          <span>抽象工厂</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46136 " style="margin-left:75px">
+				  
+		          <span>原型模式</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46136 " style="margin-left:75px">
+				  
+		          <span>建造者模式</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46138 " style="margin-left:75px">
+				  
+		          <span>策略模式</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46139 " style="margin-left:75px">
+				  
+		          <span>观察者模式</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46140 " style="margin-left:75px">
+				  
+		          <span>命令模式</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46141 " style="margin-left:75px">
+				  
+		          <span>模板模式</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/46142 " style="margin-left:75px">
+				  
+		          <span>责任链模式</span>
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fas fa-fw fa-link"></i>
+			
+			云原生
+			<span class="m-icon"><i class="fas fa-chevron-right"></i></span>
+		</a>
+            <ul  style="background:  ;" >
+              
+                <li>
+
+                  <a href="/posts/112225 " style="margin-left:75px">
+				  
+		          <span>Sealos一键安装K8S</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/16358 " style="margin-left:75px">
+				  
+		          <span>Local-Path-Provisioner动态创建本地磁盘pv</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/55588 " style="margin-left:75px">
+				  
+		          <span>Strimzi-Kafka-Operator搭建Kafka集群</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/5019 " style="margin-left:75px">
+				  
+		          <span>Prometheus-Operator搭建监控集群</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/35914 " style="margin-left:75px">
+				  
+		          <span>Minio-Operator搭建MinIO集群</span>
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/posts/51727" class="waves-effect waves-light">
+			
+				<i class="fas fa-fw fa-link"></i>
+			
+			MySQL
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="/posts/30673" class="waves-effect waves-light">
+			
+				<i class="fas fa-fw fa-link"></i>
+			
+			Kafka
+		</a>
+          
+        </li>
+        
+        <li class="m-nav-item">
+	  
+		<a href="javascript:;">
+			
+				<i class="fas fa-fw fa-link"></i>
+			
+			其他
+			<span class="m-icon"><i class="fas fa-chevron-right"></i></span>
+		</a>
+            <ul  style="background:  ;" >
+              
+                <li>
+
+                  <a href="/posts/21708 " style="margin-left:75px">
+				  
+		          <span>Hexo + GitHub Pages 搭建你的个人博客</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/32786 " style="margin-left:75px">
+				  
+		          <span>自定义域名+七牛云搭建免费hexo博客</span>
+                  </a>
+                </li>
+              
+                <li>
+
+                  <a href="/posts/13563 " style="margin-left:75px">
+				  
+		          <span>基于Redis实现查找附近的人</span>
+                  </a>
+                </li>
+              
+            </ul>
+          
+        </li>
+        
+        
+    </ul>
+</div>
+
+
+        </div>
+
+        
+    </nav>
+
+</header>
+
+    
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/4.jpg')">
+    <div class="container" style="right: 0px;left: 0px;">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <h1 class="description center-align post-title">class文件详解</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        width: 300px;
+        padding-left: 20px;
+        overflow-y: scroll;
+        max-height: calc(100vh - 80px);
+    }
+
+    .toc-widget::-webkit-scrollbar { 
+        width: 0 !important 
+    }
+
+    .toc-widget .toc-title {
+        padding: 35px 0 15px 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content {
+        padding-bottom: 5px;
+        padding-left: 20px;
+        overflow: auto;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+
+        position: absolute;
+        right: 23.5vw;
+        display: block;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #floating-toc-btn {
+        position: fixed;
+        right: 15px;
+        bottom: 76px;
+        padding-top: 15px;
+        margin-bottom: 0;
+        z-index: 998;
+    }
+
+    #floating-toc-btn .btn-floating {
+        width: 48px;
+        height: 48px;
+    }
+
+    #floating-toc-btn .btn-floating i {
+        line-height: 48px;
+        font-size: 1.4rem;
+    }
+
+    .margin-left-3{
+        margin-left: 300px !important;
+    }
+    .cate-post{
+        padding-top: 3px;
+        padding-bottom: 3px;
+    }
+    .cate-post a{
+        color: black;
+        padding-left: 20px;
+    }
+    .cate-post a:hover {
+        color: #42b983;
+    }
+</style>
+<div class="row">
+    <div id="toc-aside" class="expanded col hide-on-med-and-down">
+        <div class="toc-widget card" style="background-color: white;padding-bottom: 30px;">
+            <div class="toc-title"><i class="far fa-list-alt"></i>&nbsp;&nbsp;
+            
+            
+            JVM
+             
+            
+            </div>
+
+                    
+                    
+                         
+                         
+                            
+                              <div class="cate-post">
+                                <a style="color: #42b983;font-weight:bold" href="/posts/26123/">class文件详解</a>
+                              </div>
+                            
+                            
+                         
+                            
+                            
+                         
+                            
+                            
+                         
+                            
+                            
+                         
+                            
+                            
+                         
+                            
+                            
+                         
+                            
+                            
+                         
+                            
+                            
+                         
+                            
+                            
+                         
+                    
+                    
+
+            <div id="toc-content"></div>
+            
+            
+                    
+                         
+                         
+                            
+                            
+                            
+                         
+                            
+                            
+                              <div class="cate-post"><a href="/posts/52809/">类加载机制</a></div>
+                            
+                            
+                         
+                            
+                            
+                              <div class="cate-post"><a href="/posts/52202/">类加载器与双亲委派机制</a></div>
+                            
+                            
+                         
+                            
+                            
+                              <div class="cate-post"><a href="/posts/49553/">运行时数据区</a></div>
+                            
+                            
+                         
+                            
+                            
+                              <div class="cate-post"><a href="/posts/35447/">常量池与String.intern()方法</a></div>
+                            
+                            
+                         
+                            
+                            
+                              <div class="cate-post"><a href="/posts/679/">对象创建与内存分配</a></div>
+                            
+                            
+                         
+                            
+                            
+                              <div class="cate-post"><a href="/posts/42197/">解释器与编译器</a></div>
+                            
+                            
+                         
+                            
+                            
+                              <div class="cate-post"><a href="/posts/63062/">JIT编译器优化</a></div>
+                            
+                            
+                         
+                            
+                            
+                              <div class="cate-post"><a href="/posts/59855/">JDK调优命令行工具</a></div>
+                            
+                            
+                         
+                    
+                    
+
+        </div>
+    </div>
+    <div id="main-content" class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+
+            <div class="row tag-cate">
+              <!--
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/jvm/">
+                                <span class="chip bg-color">jvm</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+               
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fas fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/JVM/" class="post-category">
+                                JVM
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                -->
+            </div>
+
+            <div class="post-info">
+                
+                <div class="post-date info-break-policy">
+                    <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2021-11-17
+                </div>
+                
+
+                
+
+                
+                <div class="info-break-policy">
+                    <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
+                    1.7k
+                </div>
+                
+
+                
+
+                
+            </div>
+        </div>
+        <hr class="clearfix">
+
+        
+        <!-- 是否加载使用自带的 prismjs. -->
+        <link rel="stylesheet" href="/libs/prism/prism.css">
+        
+
+        
+
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h2 id="class文件结构"><a href="#class文件结构" class="headerlink" title="class文件结构"></a>class文件结构</h2><p>使用sublime text等可以查看16进制文件的工具，打开任意一个.class文件，可以看到如下内容：</p>
+<p><img src="/images/image-20211120114041548.png"></p>
+<p>其中大部分内容都是看不懂的，唯一能看懂的就是最开始的8个字母<code>cafe babe</code>，这个叫做“魔数”。</p>
+<p>魔数是用来标记这个文件是什么类型的文件的。</p>
+<p>很多类型的文件都使用了魔数，例如：</p>
+<p><img src="/images/image-20211120114337577.png"></p>
+<p>魔数之后才是class文件真正的内容。整个class文件结构大致如下：</p>
+<p><img src="/images/image-20211120121501344.png"></p>
+<p>含义解析：</p>
+<table>
+<thead>
+<tr>
+<th>结构</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CA FE BA BE</td>
+<td>魔数（咖啡宝贝），标记该文件是一个class文件</td>
+</tr>
+<tr>
+<td>副版本号</td>
+<td>编译的JDK副版本号，比如1.8.0，副版本就是0</td>
+</tr>
+<tr>
+<td>主版本号</td>
+<td>编译的JDK主版本号，比如1.8.0，主版本号是1.8</td>
+</tr>
+<tr>
+<td>常量计数器</td>
+<td>该类中的常量数量</td>
+</tr>
+<tr>
+<td>常量池数据</td>
+<td>常量的数据，常量的数量由“常量计数器”决定</td>
+</tr>
+<tr>
+<td>访问标志</td>
+<td>类的访问权限，如public</td>
+</tr>
+<tr>
+<td>类索引</td>
+<td>本类的引用信息</td>
+</tr>
+<tr>
+<td>父类索引</td>
+<td>父类的引用信息</td>
+</tr>
+<tr>
+<td>接口计数器</td>
+<td>该类中接口数量</td>
+</tr>
+<tr>
+<td>接口信息数据</td>
+<td>接口数据</td>
+</tr>
+<tr>
+<td>字段计数器</td>
+<td>该类中的字段数量</td>
+</tr>
+<tr>
+<td>字段信息数据</td>
+<td>字段详细信息</td>
+</tr>
+<tr>
+<td>方法计数器</td>
+<td>该类中的方法数量</td>
+</tr>
+<tr>
+<td>方法信息数据</td>
+<td>方法信息</td>
+</tr>
+<tr>
+<td>属性计数器</td>
+<td>属性数量</td>
+</tr>
+<tr>
+<td>属性信息数据</td>
+<td>属性信息，是对前面的数据的一个补充。例如方法信息区中无法保存方法体内容，则放在属性信息数据中保存</td>
+</tr>
+</tbody></table>
+<p>工欲善其事必先利其器，为了更好的学习class文件，推荐安装IDEA的class解析插件，叫<code>jclasslib Bytecode Viewer</code>，安装好后，选中一个类文件，点击view-&gt;show bytecode with jclasslib 即可查看class文件信息</p>
+<p><img src="/images/image-20211117215611482.png"></p>
+<p>如果发现提示<code>class root not found</code>，只需要执行一下main方法，让代码编译一下即可。</p>
+<h2 id="常量池结构"><a href="#常量池结构" class="headerlink" title="常量池结构"></a>常量池结构</h2><p>类中常量的数量是不一定的，因此有一个常量计数值（constant_pool_count）来表示常量的数量</p>
+<p>这个数值有点特殊，它是从1开始计数，假设这个值是20，那么实际常量的数量其实是19</p>
+<p>常量池中主要有两大类常量：</p>
+<ol>
+<li>字面量：Java语言层面的常量概念，比如final修饰的常量，字符串等</li>
+<li>符号引用：类、接口、字段、方法引用等</li>
+</ol>
+<p>常量的数据结构类型主要有：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>标志</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CONSTANT_Utf8_info</td>
+<td>1</td>
+<td>UTF-8字符串</td>
+</tr>
+<tr>
+<td>CONSTANT_Integer_info</td>
+<td>3</td>
+<td>int常量</td>
+</tr>
+<tr>
+<td>CONSTANT_Float_info</td>
+<td>4</td>
+<td>float常量</td>
+</tr>
+<tr>
+<td>CONSTANT_Long_info</td>
+<td>5</td>
+<td>long常量</td>
+</tr>
+<tr>
+<td>CONSTANT_Double_info</td>
+<td>6</td>
+<td>double常量</td>
+</tr>
+<tr>
+<td>CONSTANT_Class_info</td>
+<td>7</td>
+<td>类或接口引用</td>
+</tr>
+<tr>
+<td>CONSTANT_String_info</td>
+<td>8</td>
+<td>字符串常量</td>
+</tr>
+<tr>
+<td>CONSTANT_Fieldref_info</td>
+<td>9</td>
+<td>字段引用</td>
+</tr>
+<tr>
+<td>CONSTANT_Methodref_info</td>
+<td>10</td>
+<td>方法引用</td>
+</tr>
+<tr>
+<td>CONSTANT_InterfaceMethodref_info</td>
+<td>11</td>
+<td>接口中方法引用</td>
+</tr>
+<tr>
+<td>CONSTANT_NameAndType_info</td>
+<td>12</td>
+<td>字段或方法的名称和类型</td>
+</tr>
+<tr>
+<td>CONSTANT_MethodHandle_info</td>
+<td>15</td>
+<td>方法句柄</td>
+</tr>
+<tr>
+<td>CONSTANT_MethodType_info</td>
+<td>16</td>
+<td>方法类型</td>
+</tr>
+<tr>
+<td>CONSTANT_InvokeDynamic_info</td>
+<td>18</td>
+<td>动态方法调用点</td>
+</tr>
+</tbody></table>
+<p>以上类型的常量，都有各自不同的数据结构，使用标志tag来标记是哪一种常量，举几个例子：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">CONSTANT_Integer_info</span><span class="token punctuation">{</span>
+	u1 tag<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">;</span>
+    u4 bytes<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>该结构中：</p>
+<ul>
+<li>u1中的1，表示无符号的1个字节，u4则表示4个字节</li>
+<li>tag=3，对照上面的表格，说明这是int常量</li>
+<li>bytes则是int的值</li>
+</ul>
+<p>类似，<code>CONSTANT_Float_info</code>有着和<code>CONSTANT_Integer_info</code>几乎一样的结构</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">CONSTANT_Float_info</span><span class="token punctuation">{</span>
+	u1 tag<span class="token operator">=</span><span class="token number">4</span><span class="token punctuation">;</span>
+    u4 bytes<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>double和long因为占用8个字节，因此和int、float有些许不同，例如：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">CONSTANT_Long_info</span><span class="token punctuation">{</span>
+    u1 tag<span class="token operator">=</span><span class="token number">6</span><span class="token punctuation">;</span>
+    u4 high_bytes<span class="token punctuation">;</span>
+    u4 low_bytes<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>long和double的数据有高位字节和低位字节</p>
+<p><code>CONSTANT_String_info</code>的结构也不一样：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">CONSTANT_String_info</span><span class="token punctuation">{</span>
+    u1 tag<span class="token operator">=</span><span class="token number">8</span><span class="token punctuation">;</span>
+    u2 string_index<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>String类型常量结构并不直接存储字符串，而是保存了一个索引，指向<code>CONSTANT_Utf8_info</code>:</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">CONSTANT_Utf8_info</span><span class="token punctuation">{</span>
+    u1 tag<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">;</span>
+    u2 length<span class="token punctuation">;</span>
+    u1 bytes<span class="token punctuation">[</span>length<span class="token punctuation">]</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>​    其中<code>length</code>表示字符串的字节数，<code>bytes[length]</code>则是字符串的字节数组</p>
+<p>类似的，class类型的常量也是保存了一个引用：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token class-name">CONSTANT_Class_info</span><span class="token punctuation">{</span>
+    u1 tag<span class="token operator">=</span><span class="token number">7</span><span class="token punctuation">;</span>
+    u2 name_index<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p><code>name_index</code>指向了一个字符串<code>CONSTANT_Utf8_info</code>，该字符串保存了类的全限定名，即含包名的完整类名，如<code>java/lang/Object</code>。</p>
+<p>与之类似的，<strong>类中的方法和字段也使用了这种方法来表示</strong></p>
+<blockquote>
+<p>那么哪些字面量类型的值会进入常量池呢？</p>
+</blockquote>
+<ol>
+<li>final修饰的基本数据类型会进入常量池</li>
+<li>非final类型的值，只有double，float，long类型的才会进入常量池</li>
+<li>常量池中包含的字符串类型字面量会进入常量池（双引号的字符串值）</li>
+</ol>
+<p>可以使用<code>jclasslib Bytecode Viewer</code>查看常量池情况，例如下方的类，可以和上面提到的三种情况一一对照</p>
+<p><img src="/images/image-20211124214649396.png"></p>
+<h2 id="访问标记"><a href="#访问标记" class="headerlink" title="访问标记"></a>访问标记</h2><p>访问标记比较简单，有以下几种：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>含义</th>
+<th>名称</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>ACC_PUBLIC</strong></td>
+<td>是否为public</td>
+<td><strong>ACC_ABSTRACT</strong></td>
+<td>是否抽象</td>
+</tr>
+<tr>
+<td><strong>ACC_FINAL</strong></td>
+<td>是否为final</td>
+<td><strong>ACC_SYNTHETIC</strong></td>
+<td>不是用户代码生成</td>
+</tr>
+<tr>
+<td><strong>ACC_SUPER</strong></td>
+<td>始终为true，没啥用</td>
+<td><strong>ACC_ANNOTATION</strong></td>
+<td>是否是注解</td>
+</tr>
+<tr>
+<td><strong>ACC_INTERFACE</strong></td>
+<td>是否是接口</td>
+<td><strong>ACC_ENUM</strong></td>
+<td>是否是枚举</td>
+</tr>
+</tbody></table>
+<h2 id="类索引"><a href="#类索引" class="headerlink" title="类索引"></a>类索引</h2><p>类索引包含本类索引，父类索引，接口索引，它们都是一种符号引用，指向了常量池中对应的<code>CONSTANT_Class_info</code></p>
+<h2 id="字段"><a href="#字段" class="headerlink" title="字段"></a>字段</h2><p>字段包含几个部分：</p>
+<ol>
+<li>访问标记，如public，private</li>
+<li>字段名</li>
+<li>描述符</li>
+</ol>
+<p><strong>字段访问标记：</strong></p>
+<table>
+<thead>
+<tr>
+<th>标记</th>
+<th>含义</th>
+<th>标记</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>ACC_PUBLIC</strong></td>
+<td>是否public</td>
+<td><strong>ACC_VOLATILE</strong></td>
+<td>是否volatile</td>
+</tr>
+<tr>
+<td><strong>ACC_PRIVATE</strong></td>
+<td>是否private</td>
+<td><strong>ACC_TRANSIENT</strong></td>
+<td>是否transient</td>
+</tr>
+<tr>
+<td><strong>ACC_PROTECTED</strong></td>
+<td>是否protected</td>
+<td><strong>ACC_SYNTHETIC</strong></td>
+<td>是否由编译器自动产生</td>
+</tr>
+<tr>
+<td><strong>ACC_STATIC</strong></td>
+<td>是否static</td>
+<td><strong>ACC_ENUM</strong></td>
+<td>是否是枚举</td>
+</tr>
+<tr>
+<td><strong>ACC_FINAL</strong></td>
+<td>是否final</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p><strong>字段名</strong>：一种符号引用，指向常量池</p>
+<p><strong>描述符</strong>，用于表示字段的类型：</p>
+<table>
+<thead>
+<tr>
+<th>描述符标志</th>
+<th>含义</th>
+<th>描述符标志</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>B</strong></td>
+<td>byte</td>
+<td><strong>J</strong></td>
+<td>long</td>
+</tr>
+<tr>
+<td><strong>C</strong></td>
+<td>char</td>
+<td><strong>S</strong></td>
+<td>short</td>
+</tr>
+<tr>
+<td><strong>D</strong></td>
+<td>double</td>
+<td><strong>Z</strong></td>
+<td>boolean</td>
+</tr>
+<tr>
+<td><strong>F</strong></td>
+<td>float</td>
+<td><strong>V</strong></td>
+<td>void</td>
+</tr>
+<tr>
+<td><strong>I</strong></td>
+<td>int</td>
+<td><strong>L</strong></td>
+<td>对象类型，如<code>Ljava/lang/Object</code></td>
+</tr>
+</tbody></table>
+<p>数组类型的，则使用符号<code>[</code>表示，n维数组就有n个<code>[</code>，例如：</p>
+<ul>
+<li><p><code>String[]</code>的描述符为<code>[Ljava/lang/Object</code></p>
+</li>
+<li><p><code>float[][]</code>的描述符为<code>[[F</code></p>
+</li>
+</ul>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p>方法和字段的结构一致，也是包含访问标记、名称、描述符</p>
+<p><strong>方法访问标记</strong></p>
+<table>
+<thead>
+<tr>
+<th>标记</th>
+<th>含义</th>
+<th>标记</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>ACC_PUBLIC</strong></td>
+<td>是否public</td>
+<td><strong>ACC_BRIDGE</strong></td>
+<td>是否由编译器产生的桥接方法</td>
+</tr>
+<tr>
+<td><strong>ACC_PRIVATE</strong></td>
+<td>是否private</td>
+<td><strong>ACC_VARARGS</strong></td>
+<td>是否接受不定参数</td>
+</tr>
+<tr>
+<td><strong>ACC_PROTECTED</strong></td>
+<td>是否protected</td>
+<td><strong>ACC_NATIVE</strong></td>
+<td>是否为native</td>
+</tr>
+<tr>
+<td><strong>ACC_STATIC</strong></td>
+<td>是否static</td>
+<td><strong>ACC_ABSTRACT</strong></td>
+<td>是否abstract</td>
+</tr>
+<tr>
+<td><strong>ACC_FINAL</strong></td>
+<td>是否final</td>
+<td><strong>ACC_STRICTFP</strong></td>
+<td>是否stricfp</td>
+</tr>
+<tr>
+<td><strong>ACC_SYNCHRONIZED</strong></td>
+<td>是否synchronized</td>
+<td><strong>ACC_SYNTHETIC</strong></td>
+<td>是否由编译器自动产生</td>
+</tr>
+</tbody></table>
+<p><strong>方法名</strong>：一个符号引用，指向常量池字符串</p>
+<p><strong>描述符</strong>：方法的描述符，基本格式为<code>(方法参数1;方法参数2)返回值</code>，例如以下方法：</p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">private</span> <span class="token keyword">int</span> <span class="token function">myMethod</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">,</span> <span class="token keyword">int</span> args2<span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<p>对应的描述符为<code>([java/lang/String;I)I</code></p>
+<p>奇怪的是，方法区里只有方法的签名，却没有方法的具体代码。</p>
+<p>其实方法的代码，被编译成字节码之后保存在属性信息数据中了</p>
+<h2 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h2><p>字段、方法等数据，都可以携带自己的属性，例如方法的源码，则是编译成字节码保存在名为<code>Code</code>的属性中</p>
+
+                
+            </div>
+            <!-- <hr/> -->
+
+            
+
+    <div class="reprint" id="reprint-statement">
+        
+            <div class="reprint__author">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-user">
+                        文章作者:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="/about" rel="external nofollow noreferrer">周君</a>
+                </span>
+            </div>
+            <div class="reprint__type">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-link">
+                        文章链接:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    <a href="http://www.javajun.net/posts/26123/">http://www.javajun.net/posts/26123/</a>
+                </span>
+            </div>
+            <div class="reprint__notice">
+                <span class="reprint-meta" style="font-weight: bold;">
+                    <i class="fas fa-copyright">
+                        版权声明:
+                    </i>
+                </span>
+                <span class="reprint-info">
+                    本博客所有文章除特別声明外，均采用
+                    <a href="https://creativecommons.org/licenses/by/4.0/deed.zh" rel="external nofollow noreferrer" target="_blank">CC BY 4.0</a>
+                    许可协议。转载请注明来源
+                    <a href="/about" target="_blank">周君</a>
+                    !
+                </span>
+            </div>
+        
+    </div>
+
+    <script async defer>
+      document.addEventListener("copy", function (e) {
+        let toastHTML = '<span>复制成功，请遵循本文的转载规则</span><button class="btn-flat toast-action" onclick="navToReprintStatement()" style="font-size: smaller">查看</a>';
+        M.toast({html: toastHTML})
+      });
+
+      function navToReprintStatement() {
+        $("html, body").animate({scrollTop: $("#reprint-statement").offset().top - 80}, 800);
+      }
+    </script>
+
+
+
+            <div class="tag_share" style="display: block;">
+                <div class="post-meta__tag-list" style="display: inline-block;">
+                    
+                        <div class="article-tag">
+                            
+                                <a href="/tags/jvm/">
+                                    <span class="chip bg-color">jvm</span>
+                                </a>
+                            
+                        </div>
+                    
+                </div>
+                <div class="post_share" style="zoom: 80%; width: fit-content; display: inline-block; float: right; margin: -0.15rem 0;">
+                    <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+<div id="article-share">
+
+    
+    <div class="social-share" data-sites="twitter,facebook,google,qq,qzone,wechat,weibo,douban,linkedin" data-wechat-qrcode-helper="<p>微信扫一扫即可分享！</p>"></div>
+    <script src="/libs/share/js/social-share.min.js"></script>
+    
+
+    
+
+</div>
+
+                </div>
+                
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        <div class="col s12 m6">
+            
+                <a href="/posts/52809/">
+                    <span class="">上一篇: 类加载机制</span>
+                </a>
+            
+        </div>
+        <div class="col s12 m6" style="text-align: right">
+            
+                <a href="/posts/30673/">
+                    <span class="">下一篇: Kafka安装</span>
+                </a>
+            
+        </div>
+        
+    </div>
+</article>
+
+            </div>
+            
+                <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.4rem;
+        line-height: 38px;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-medium waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fas fa-times"></i></a>
+            <h4 class="reward-title">你的赏识是我前进的动力</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.png" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.png" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+
+            
+            
+        </div>
+    </div>
+
+    
+        <link rel="stylesheet" href="/libs/gitalk/gitalk.css">
+<link rel="stylesheet" href="/css/my-gitalk.css">
+
+<div class="card gitalk-card" data-aos="fade-up">
+    <div class="comment_headling" style="font-size: 20px; font-weight: 700; position: relative; padding-left: 20px; top: 15px; padding-bottom: 5px;">
+        <i class="fas fa-comments fa-fw" aria-hidden="true"></i>
+        <span>评论</span>
+    </div>
+    <div id="gitalk-container" class="card-content"></div>
+</div>
+
+<script src="/libs/gitalk/gitalk.min.js"></script>
+<script>
+    let gitalk = new Gitalk({
+        clientID: 'f23a6e4404e8041c9568',
+        clientSecret: 'b7e2563a05b69e89361514109bb08727a2295768',
+        repo: 'gitalk',
+        owner: 'itzhoujun',
+        admin: ["itzhoujun"],
+        id: '2021-11-17T18-51-22',
+        distractionFreeMode: false  // Facebook-like distraction free mode
+    });
+
+    gitalk.render('gitalk-container');
+</script>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</div>
+
+
+
+<!-- 代码块功能依赖 -->
+<script type="text/javascript" src="/libs/codeBlock/codeBlockFuction.js"></script>
+
+<!-- 代码语言 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeLang.js"></script>
+
+
+<!-- 代码块复制 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeCopy.js"></script>
+
+
+<!-- 代码块收缩 -->
+
+<script type="text/javascript" src="/libs/codeBlock/codeShrink.js"></script>
+
+
+    </div>
+    
+</div>
+
+<!-- TOC 悬浮按钮. 
+
+<div id="floating-toc-btn" class="hide-on-med-and-down">
+    <a class="btn-floating btn-large bg-color">
+        <i class="fas fa-list-ul"></i>
+    </a>
+</div>
+
+-->
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            collapseDepth: Number('0'),
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+                if(!$('#toc-aside').is(":hidden")){
+                    $('#main-content').addClass("margin-left-3");
+                }
+                
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+                $('#main-content').removeClass("margin-left-3");
+            }
+        });
+
+        
+        /* 修复文章卡片 div 的宽度. */
+        let fixPostCardWidth = function (srcId, targetId) {
+            let srcDiv = $('#' + srcId);
+            if (srcDiv.length === 0) {
+                return;
+            }
+
+            let w = srcDiv.width();
+            if (w >= 450) {
+                w = w + 21;
+            } else if (w >= 350 && w < 450) {
+                w = w + 18;
+            } else if (w >= 300 && w < 350) {
+                w = w + 16;
+            } else {
+                w = w + 14;
+            }
+            $('#' + targetId).width(w);
+        };
+
+        // 切换TOC目录展开收缩的相关操作.
+        const expandedClass = 'expanded';
+        let $tocAside = $('#toc-aside');
+        let $mainContent = $('#main-content');
+        $('#floating-toc-btn .btn-floating').click(function () {
+            if ($tocAside.hasClass(expandedClass)) {
+                $tocAside.removeClass(expandedClass).hide();
+                $mainContent.removeClass('l9');
+                $mainContent.removeClass("margin-left-3");
+            } else {
+                $tocAside.addClass(expandedClass).show();
+                $mainContent.addClass('l9');
+                if($tocWidget.hasClass('toc-fixed')){
+                    $mainContent.addClass("margin-left-3");
+                }
+                
+            }
+            // fixPostCardWidth('artDetail', 'prenext-posts');
+        });
+        
+    });
+</script>
+
+    
+
+</main>
+
+
+
+
+    <footer class="page-footer bg-color">
+    
+    <div class="container row center-align" style="margin-bottom: 0px !important;">
+        <div class="col s12 m8 l8 copy-right">
+            Copyright&nbsp;&copy;
+            
+                <span id="year">2019-2024</span>
+            
+            <span id="year">2019</span>
+            <a href="/about" target="_blank">周君</a>
+            |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>
+            |&nbsp;Theme&nbsp;<a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">Matery</a>
+            <br>
+            
+            &nbsp;<i class="fas fa-chart-area"></i>&nbsp;站点总字数:&nbsp;<span
+                class="white-color">52.6k</span>&nbsp;字
+            
+            
+            
+            
+            
+            
+            <span id="busuanzi_container_site_pv">
+                |&nbsp;<i class="far fa-eye"></i>&nbsp;总访问量:&nbsp;<span id="busuanzi_value_site_pv"
+                    class="white-color"></span>&nbsp;次
+            </span>
+            
+            
+            <span id="busuanzi_container_site_uv">
+                |&nbsp;<i class="fas fa-users"></i>&nbsp;总访问人数:&nbsp;<span id="busuanzi_value_site_uv"
+                    class="white-color"></span>&nbsp;人
+            </span>
+            
+            <br>
+            
+            <br>
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+
+
+    <a href="mailto:380472723@qq.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fas fa-envelope-open"></i>
+    </a>
+
+
+
+
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=380472723" class="tooltipped" target="_blank" data-tooltip="QQ联系我: 380472723" data-position="top" data-delay="50">
+        <i class="fab fa-qq"></i>
+    </a>
+
+
+
+
+
+
+
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+    <!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fas fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function () {
+    var searchFunc = function (path, search_id, content_id) {
+        'use strict';
+        $.ajax({
+            url: path,
+            dataType: "xml",
+            success: function (xmlResponse) {
+                // get the contents from search data
+                var datas = $("entry", xmlResponse).map(function () {
+                    return {
+                        title: $("title", this).text(),
+                        content: $("content", this).text(),
+                        url: $("url", this).text()
+                    };
+                }).get();
+                var $input = document.getElementById(search_id);
+                var $resultContent = document.getElementById(content_id);
+                $input.addEventListener('input', function () {
+                    var str = '<ul class=\"search-result-list\">';
+                    var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                    $resultContent.innerHTML = "";
+                    if (this.value.trim().length <= 0) {
+                        return;
+                    }
+                    // perform local searching
+                    datas.forEach(function (data) {
+                        var isMatch = true;
+                        var data_title = data.title.trim().toLowerCase();
+                        var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                        var data_url = data.url;
+                        data_url = data_url.indexOf('/') === 0 ? data.url : '/' + data_url;
+                        var index_title = -1;
+                        var index_content = -1;
+                        var first_occur = -1;
+                        // only match artiles with not empty titles and contents
+                        if (data_title !== '' && data_content !== '') {
+                            keywords.forEach(function (keyword, i) {
+                                index_title = data_title.indexOf(keyword);
+                                index_content = data_content.indexOf(keyword);
+                                if (index_title < 0 && index_content < 0) {
+                                    isMatch = false;
+                                } else {
+                                    if (index_content < 0) {
+                                        index_content = 0;
+                                    }
+                                    if (i === 0) {
+                                        first_occur = index_content;
+                                    }
+                                }
+                            });
+                        }
+                        // show search results
+                        if (isMatch) {
+                            str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                            var content = data.content.trim().replace(/<[^>]+>/g, "");
+                            if (first_occur >= 0) {
+                                // cut out 100 characters
+                                var start = first_occur - 20;
+                                var end = first_occur + 80;
+                                if (start < 0) {
+                                    start = 0;
+                                }
+                                if (start === 0) {
+                                    end = 100;
+                                }
+                                if (end > content.length) {
+                                    end = content.length;
+                                }
+                                var match_content = content.substr(start, end);
+                                // highlight all keywords
+                                keywords.forEach(function (keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    match_content = match_content.replace(regS, "<em class=\"search-keyword\">" + keyword + "</em>");
+                                });
+
+                                str += "<p class=\"search-result\">" + match_content + "...</p>"
+                            }
+                            str += "</li>";
+                        }
+                    });
+                    str += "</ul>";
+                    $resultContent.innerHTML = str;
+                });
+            }
+        });
+    };
+
+    searchFunc('/search.xml', 'searchInput', 'searchResult');
+});
+</script>
+
+    <!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+</div>
+
+
+    <script src="/libs/materialize/materialize.min.js"></script>
+    <script src="/libs/masonry/masonry.pkgd.min.js"></script>
+    <script src="/libs/aos/aos.js"></script>
+    <script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+    <script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+    <script src="/js/matery.js"></script>
+
+    <!-- Baidu Analytics -->
+
+    <!-- Baidu Push -->
+
+<script>
+    (function () {
+        var bp = document.createElement('script');
+        var curProtocol = window.location.protocol.split(':')[0];
+        if (curProtocol === 'https') {
+            bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+        } else {
+            bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+        }
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(bp, s);
+    })();
+</script>
+
+    
+    
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+    
+
+    
+
+    
+
+    <!--腾讯兔小巢-->
+    
+    
+
+    
+
+    
+    <script type="text/javascript" src="/libs/background/ribbon-dynamic.js" async="async"></script>
+    
+
+    
+    <script src="/libs/instantpage/instantpage.js" type="module"></script>
+    
+
+
+</body>
+
+</html>

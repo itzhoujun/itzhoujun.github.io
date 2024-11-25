@@ -1,0 +1,14 @@
+/* Here is your custom css styles. */
+.list-post-title {
+    font-weight: bold !important;
+    margin-left: -2px;
+}
+a{
+    text-decoration: none !important;
+}
+a:hover {
+    text-decoration: none !important;
+}
+.nav-menu li .sub-nav{
+    position: fixed !important;
+}
